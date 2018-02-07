@@ -71,4 +71,13 @@ public class FingerPrintServices {
 		}
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @param id id of a current user.
+	 * @return get last fingerprint of user.
+	 */
+	public static FingerPrint getLastFingerPrintByUser(int id) {
+		return fingerPrintDao.getLastFingerPrint(id);
+	}
 }

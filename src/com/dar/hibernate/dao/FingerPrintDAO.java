@@ -28,6 +28,18 @@ public List<FingerPrint> getFingersPrintByUser(int id){
 		return ts;
 		
 	}
+
+public FingerPrint getLastFingerPrint(int id) {
+	Session session = sessionFactory.getCurrentSession();
+	session.beginTransaction();
+	@SuppressWarnings("unchecked")
+	List<FingerPrint> ts = session
+			.createQuery("from FingerPrint where idUser = :id").setInteger("id",id)
+			.list();
+	session.getTransaction().commit();
+	session.close();
+	return ts.get(ts.size()-1);
+}
 	
 
 }

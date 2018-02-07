@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.dar.hibernate.entity.FingerPrint;
 import com.dar.services.FingerPrintServices;
 import com.dar.services.UserServices;
 import com.dar.tools.ErrorTools;
@@ -28,6 +29,7 @@ public class LoginServlet  extends HttpServlet{
 		int timezone = Integer.parseInt(requete.getHeader("timezone"));
 		String resolution = requete.getHeader("resolution");
 		int enabledCookie = Integer.parseInt(requete.getHeader("enabledCookie"));
+		
 		try {
 			JSONObject j = new JSONObject(requestData);
 			JSONObject json = UserServices.login(j.optString("mail", null), j.optString("password", null));
@@ -35,6 +37,14 @@ public class LoginServlet  extends HttpServlet{
 				ErrorTools.setStatut(json.getJSONObject("error").getInt("code"), reponse);
 			} else {
 				FingerPrintServices.create(timezone, resolution, enabledCookie, json.optInt("id"));
+				FingerPrint lastFingerPrint = FingerPrintServices.getLastFingerPrintByUser(json.optInt("id"));
+				/**
+				 * return last fingerprint to the current user.
+				 */
+				json.put("enabledCookie",lastFingerPrint.getEnabledCookie());
+				json.put("resolution", lastFingerPrint.getResolution());
+				json.put("timezone",lastFingerPrint.getTimezone());
+				json.put("nbrConnexion", lastFingerPrint.getNbConnexion());
 			}
 			reponse.getWriter().print(json);
 		} catch (JSONException e) {
